@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
 
 public class WebParametrizedTests {
@@ -27,6 +28,18 @@ public class WebParametrizedTests {
         $("#searchbox_input").setValue(searchQuery).pressEnter();
         $$("[data-testid='mainline'] li[data-layout='organic']")
                 .shouldBe(sizeGreaterThan(0));
+    }
+
+    @ValueSource(strings = {
+        "Selenide", "JUnit 5", "Allure"
+    })
+    @ParameterizedTest(name = "Поисковая выдача отдает информацию о {0}, а в первой карточке должна быть ссылка на {1}")
+    @Tag("BLOCKER")
+
+    void searchResultShouldContainExpectedUrl(String searchQuery, String expectedLink) {
+        $("#searchbox_input").setValue(searchQuery).pressEnter();
+        $("[data-testid='mainline'] li[data-layout='organic']")
+            .shouldBe(text(expectedLink));
     }
 
 
